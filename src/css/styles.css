@@ -1,3 +1,104 @@
-body {
-  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+/* RESET */
+
+* {
+  margin: 0px;
+  padding: 0px;
 }
+
+:root {
+  font-family: sans-serif;
+}
+
+body {
+
+}
+
+/* VARIABLES */
+
+body * {
+  /* border: red solid 1px; */
+}
+
+/* COMPONENTS */
+
+
+/* LAYOUT */
+
+main {
+  display: flex;
+  flex-direction: column;
+
+  height: 100vh;
+  width: 100vw;
+}
+
+main > header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+.customer-dashboard {
+  display: flex;
+  flex-direction: column;
+}
+
+.customer-dashboard-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
+  margin-bottom: 50px;
+}
+
+.customer-dashboard-body {
+  height: 70vh;
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+
+  justify-content: center;
+}
+
+.bookings {
+  width: 50vw;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.bookings-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+
+  margin-bottom: 20px;
+}
+
+.each-bookings-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.each-booking {
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
+
+.date {
+  margin-left: 10px;
+  margin-right: 20px;
+}
+
+
+
+/* STYLES */
+
