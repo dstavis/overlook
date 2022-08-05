@@ -16,10 +16,17 @@ body {
 /* VARIABLES */
 
 body * {
-  /* border: red solid 1px; */
+  border: red solid 1px;
+}
+
+/* UTILITIES */
+
+.hidden {
+  display: none;
 }
 
 /* COMPONENTS */
+
 
 
 /* LAYOUT */
