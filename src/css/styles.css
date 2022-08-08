@@ -16,10 +16,17 @@ body {
 /* VARIABLES */
 
 body * {
-  /* border: red solid 1px; */
+  border: red solid 1px;
+}
+
+/* UTILITIES */
+
+.hidden {
+  display: none !important;
 }
 
 /* COMPONENTS */
+
 
 
 /* LAYOUT */
@@ -62,6 +69,7 @@ main > header {
   flex-direction: row;
 
   justify-content: center;
+
 }
 
 .bookings {
@@ -79,23 +87,30 @@ main > header {
   margin-bottom: 20px;
 }
 
-.each-bookings-container {
+.individual-bookings-container {
   display: flex;
   flex-direction: column;
   justify-content: start;
+  overflow: scroll;
 }
 
-.each-booking {
+.individual-booking {
   height: 40px;
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
+
+  margin-bottom: 10px;
 }
 
-.date {
+.date, .price {
   margin-left: 10px;
   margin-right: 20px;
+}
+
+.price {
+  
 }
 
 
