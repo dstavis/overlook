@@ -26,10 +26,10 @@ describe('Booking', function() {
   });
 
   it('should have a date', function() {
-    expect(booking.customer.date).to.equal(bookingData.date);
+    expect(booking.date).to.equal(bookingData.date);
   });
 
   it('should have a roomNumber', function() {
-    expect(booking.customer.roomNumber).to.equal(bookingData.roomNumber);
+    expect(booking.roomNumber).to.equal(bookingData.roomNumber);
   });
 });

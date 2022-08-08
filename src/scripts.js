@@ -20,14 +20,14 @@ let roomsURL = "http://localhost:3001/api/v1/rooms"
 // Global Data Variables
 
 let currentCustomer;
-let customers;
-let bookings;
-let rooms;
 
 // Query Selectors
 
-const eachBookingTemplate = document.querySelector(".each-booking template")
-const eachBookingsContainer = document.querySelector(".each-bookings-container")
+const customerWelcomeName = document.querySelector(".customer-name")
+const customerTotalSpentDisplay = document.querySelector(".total-spent .dollars")
+
+const individualBookingTemplate = document.querySelector(".individual-booking.template")
+const individualBookingsContainer = document.querySelector(".individual-bookings-container")
 
 // Event listeners
 
@@ -40,54 +40,99 @@ function chooseRandomCustomerID() {
 
 function start() {
   console.log("Here we go!") 
-  let idNumber = chooseRandomCustomerID()
-
   loadData()
+  console.log("Data loading")
 }
 
 function loadData(){
-  Promise.all( [fetch(customersURL), fetch(bookingsURL), fetch(roomsURL)] )
+  Promise.all( [fetch(customersURL), fetch(bookingsURL), fetch(roomsURL), fetch(customersURL + "/" + chooseRandomCustomerID())] )
     .then( (responses) => {
       return Promise.all(responses.map( (response) => {
         return response.json()
       }))
     })
     .then( (data) => {
-      customers = data[0].customers
-      bookings = data[1].bookings
-      rooms = data[2].rooms
-    }) // massage the data into convenient shapes for display scripts
+      // customers = data[0].customers
+      let bookingsData = data[1].bookings
+      let roomsData = data[2].rooms
+      let customerData = data[3]
+      
+      let apiData = {bookings: bookingsData, rooms: roomsData, customer: customerData}
+      
+      // massage the data into convenient shapes for display scripts
+      massageData(apiData)
+      // display scripts
+      displayCustomerName(currentCustomer)
+      displayBookingsForCustomer(currentCustomer)
+    })
+    
+}
+  
+function massageData(apiData) {
+  // What do I want to know for display?
+  // I want to know all the bookings made by a single customer.
+  
+  // find bookings whose userID field matches customer.ID field
+  let customerBookingsWithPrice = apiData.bookings.filter( (booking) => {
+    return booking.userID === apiData.customer.id
+    // For each booking, I want to know how much it cost
+  }).map( (booking) => {
+    // get that booking's roomNumber value and find the room whose room.number value matches it
+    // that room has a costPerNight, which tells me the cost of the booking
+    booking.price = apiData.rooms.find( (room) => room.number === booking.roomNumber).costPerNight
+    return booking;
+  })
+  // I want each customer to know how much they've spent so far
+  // after I've made a list of all the bookings w/costs, reduce it by summing their costs together to get the total
+  // *note: I moved this logic into a method on the Customer class so that it could be used in other situations
+  // it also gets used automatically during the customer constructor so we don't have to specifically ask for it 
+  
+  // Create class instances of customer (and bookings to live on that customer)
+  let instantiatedBookings = customerBookingsWithPrice.map(bookingData => {
+    return new Booking(bookingData)
+  })
+  
+  let customerData = apiData.customer
+  customerData.bookings = instantiatedBookings;
+    
   // assign data to global variables => save it in the format that is most useful 
-
+  currentCustomer = new Customer(customerData)
 }
 
-function loadCustomerBookings(customer){
-  // let currentCustomer = new Customer(customerData)
-  // getBookingsForCustomer(currentCustomer)
+function displayCustomerName() {
+  // Query select the welcome message
+  // insert the current customer's name into that text
+  customerWelcomeName.innerText = currentCustomer.name;
 }
 
-function getBookingsForCustomer(customer){
-  // return an array containing bookings whose userID field matches the customer's id field
+function displayBookingsForCustomer(customer) {
   
-  // let bookings;
-  // customer.id;
-  // fetch(bookingsURL)
-  //   .then( response => response.json())
-  //   .then( data => )
-  // return bookings;
-}
+  // Now that I've got that info, what do I want to do with it?
+  // I want to display the customer's total spent in the header
+  customerTotalSpentDisplay.innerText = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(customer.totalSpent)
+  console.log("~~~~do da thing")
 
-function displayBookingsForCustomer(customerData) {
+  // query select the container for the rows of bookings
   
-  // customerBookings.forEach( (booking) => {
-  //   displayBooking(booking)
-  // } )
+  // make a new booking from the template
+
+  
+  customer.bookings.forEach( (booking) => {
+    displayBooking(booking)
+  } )
 }
 
 function displayBooking(booking){
-  // let freshBooking = eachBookingTemplate.cloneNode()
-  // freshBooking.classList.remove("hidden")
-  // freshBooking
-  // // add data to the booking
-  // eachBookingsContainer.append(freshBooking)
+  let freshBooking = individualBookingTemplate.cloneNode(true)
+  freshBooking.classList.remove("template")
+  freshBooking.classList.remove("hidden")
+  // fill the template clone with a particular booking's info
+  // I want to display a list of rows with each booking's info, including...
+    // The booking date
+    // the room number
+    // the cost of that booking
+  freshBooking.querySelector(".date").innerText = booking.date;
+  freshBooking.querySelector(".room-number").innerText = `Room ${booking.roomNumber}`;
+  freshBooking.querySelector(".price").innerText = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(booking.price)
+  individualBookingsContainer.append(freshBooking)
 }

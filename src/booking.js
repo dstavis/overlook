@@ -5,6 +5,7 @@ class Booking {
     this.customer;
     this.date = bookingData.date;
     this.roomNumber = bookingData.roomNumber;
+    this.price = bookingData.price;
   }
 
 }
