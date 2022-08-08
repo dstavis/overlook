@@ -91,6 +91,8 @@ function massageData(apiData) {
   let instantiatedBookings = customerBookingsWithPrice.map(bookingData => {
     return new Booking(bookingData)
   })
+
+  instantiatedBookings.sort( (a, b) => { return new Date(b.date) - new Date(a.date)} )
   
   let customerData = apiData.customer
   customerData.bookings = instantiatedBookings;
