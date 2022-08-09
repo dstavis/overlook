@@ -33,9 +33,24 @@
           </div>
           <hr>
           <div class="date-input-container">
-            <label>
-              <input type="date">
-            </label>
+            <div class="date-input">
+              <label for="room-date">
+                Date: 
+              </label>
+              <input type="date" id="room-date">
+            </div>
+            <div class="room-filter">
+              <label for="room-type-select">
+                Filter by room type:
+              </label>
+              <select id="room-type-select" name="room-types">
+                <option value="any" selected="true">Any</option>
+                <option value="single room">Single Room</option>
+                <option value="suite">Suite</option>
+                <option value="junior suite">Junior Suite</option>
+                <option value="residential suite">Residential Suite</option>
+              </select>
+            </div>
           </div>
 
           <div class="individual-room-details-container">
@@ -63,7 +78,7 @@
   </button>
 
   <div class="individual-room-detail template hidden">
-    <button type="button">Book This Room</button> <span class="room-number">Room 5</span> <span class="room-cost">$459.54</span> <span class="beds">2 Queen</span> <span class="bidet">Bidet: Yes</span>
+    <button type="button">Book This Room</button> <span class="room-number">Room 5</span> <span class="room-cost">$459.54</span> <span class="room-type">suite</span> <span class="beds">2 Queen</span> <span class="bidet">Bidet: Yes</span>
   </div>
 
 

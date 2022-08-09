@@ -35,10 +35,6 @@ hr {
   margin-bottom: 20px;
 }
 
-input[type="date"] {
-  margin-bottom: 20px;
-}
-
 button {
   box-sizing: border-box;
   padding: 5px;
@@ -93,6 +89,7 @@ sub {
   overflow: hidden;
 
 }
+
 .reserve{
   width: 50vw;
   min-height: 300px;
@@ -105,7 +102,8 @@ sub {
 .date-input-container {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-evenly;
+  margin-bottom: 20px;
 }
 
 .bookings {
@@ -162,7 +160,7 @@ sub {
 .individual-room-detail {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 

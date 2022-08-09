@@ -27,6 +27,7 @@ let bookings;
 // Query Selectors
 
 const dateControl = document.querySelector(`input[type="date"]`)
+const roomFilter = document.querySelector("#room-type-select")
 
 const customerWelcomeName = document.querySelector(".customer-name")
 const customerTotalSpentDisplay = document.querySelector(".total-spent .dollars")
@@ -40,7 +41,8 @@ const individualRoomDetailsContainer = document.querySelector(".individual-room-
 // Event listeners
 
 window.addEventListener("load", start)
-dateControl.addEventListener("input", dateChanged)
+dateControl.addEventListener("input", criteriaChanged)
+roomFilter.addEventListener("input", criteriaChanged)
 
 function chooseRandomCustomerID() {
   let randomIDNumber = Math.floor((1 + Math.random() * 50))
@@ -82,20 +84,36 @@ function loadData(){
     })
 }
 
-function dateChanged(event) {
-  let newDate = event.target.value;
-  // check all the rooms.
-  // for each room's room number, are there any bookings with that room number whose date matches newDate?
-  // if so, that room is OUT
-  // all the other rooms are in
-  console.log("wat")
-  let roomsForDate = rooms.filter( (room) => {
-    return !bookings.some( (booking) => {
+function criteriaChanged(event) {
+  event.preventDefault()
+  let roomsForDisplay = determineRooms()
+  // show a list of all the rooms that made it through the filter 
+  showRoomsForReservation(roomsForDisplay)
+}
+
+function determineRooms() {
+  let newDate = dateControl.value;
+  
+  return rooms.filter( (room) => {
+    let selectedRoomType = roomFilter.value
+    
+    let matchesSelectedRoomType = room.roomType === selectedRoomType
+    // check all the rooms.
+    // for each room's room number, are there any bookings with that room number whose date matches newDate?
+    // if so, that room is OUT
+    // all the other rooms are in
+    let notBooked = !bookings.some( (booking) => {
       return ((booking.roomNumber === room.number) && (booking.date === newDate.split("-").join("/")))
     })
+    
+    // if the user is filtering by room type
+    if (roomFilter.value !== "any") {
+      // return true only if both the matches and notbooked are true
+      return (matchesSelectedRoomType && notBooked)
+    }
+    // otherwise, ignore matches and return true if notbooked alone is true
+    return notBooked
   })
-  // show a list of all the rooms that made it through the filter 
-  showRoomsForReservation(roomsForDate)
 }
 
 function showRoomsForReservation(roomDetails) {
@@ -108,9 +126,10 @@ function showRoomsForReservation(roomDetails) {
     freshRoomDisplay.classList.remove("template")
     freshRoomDisplay.classList.remove("hidden")
     // fill the fresh individualRoomDetail with the data extracted from the room
-    freshRoomDisplay.querySelector(".room-number").innerText = roomDetail.number
+    freshRoomDisplay.querySelector(".room-number").innerText = "Room " + roomDetail.number
     freshRoomDisplay.querySelector(".room-cost").innerText = "$" + roomDetail.costPerNight
-    freshRoomDisplay.querySelector(".beds").innerText = roomDetail.numBeds + " " + roomDetail.bedSize + "(s)"
+    freshRoomDisplay.querySelector(".room-type").innerText = roomDetail.roomType
+    freshRoomDisplay.querySelector(".beds").innerText = roomDetail.numBeds + " " + roomDetail.bedSize + " bed(s)"
     let hasBidet = roomDetail.bidet ? "Yes" : "No"
     freshRoomDisplay.querySelector(".bidet").innerText = "Bidet: " + hasBidet
     // find the container we want the individualRoomDetail(s) to be displayed in
