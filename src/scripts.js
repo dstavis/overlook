@@ -20,8 +20,11 @@ let roomsURL = "http://localhost:3001/api/v1/rooms"
 // Global Data Variables
 
 let currentCustomer;
+let today = new Date().toLocaleDateString("en-CA")
 
 // Query Selectors
+
+const dateControl = document.querySelector(`input[type="date"]`)
 
 const customerWelcomeName = document.querySelector(".customer-name")
 const customerTotalSpentDisplay = document.querySelector(".total-spent .dollars")
@@ -40,6 +43,8 @@ function chooseRandomCustomerID() {
 
 function start() {
   console.log("Here we go!") 
+  dateControl.min = today;
+  dateControl.value = today;
   loadData()
   console.log("Data loading")
 }
@@ -92,6 +97,7 @@ function massageData(apiData) {
     return new Booking(bookingData)
   })
 
+  // Sort bookings by date in descending order (most recent/farthest in the future first)
   instantiatedBookings.sort( (a, b) => { return new Date(b.date) - new Date(a.date)} )
   
   let customerData = apiData.customer
