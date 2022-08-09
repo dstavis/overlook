@@ -31,12 +31,15 @@
           <div class="reserve-header">
             <h2>Make a Reservation</h2>
           </div>
+          <hr>
           <div class="date-input-container">
-            <input type="date">
+            <label>
+              <input type="date">
+            </label>
           </div>
 
-          <div class="reserve-results-container">
-
+          <div class="individual-room-details-container">
+            <p>Choose a date above to see rooms available on that day</p>
           </div>
         </section>
         
@@ -45,8 +48,8 @@
             <h2>Bookings</h2>
             <p><sub>by date in descending order</sub></p>
           </div>
+          <hr>
           <div class="individual-bookings-container">
-            
           </div>
         </section>
       </section>
@@ -58,6 +61,10 @@
   <button class="individual-booking template hidden">
     <span class="date"></span> <span class="room-number"></span> <span class="price"></span>
   </button>
+
+  <div class="individual-room-detail template hidden">
+    <button type="button">Book This Room</button> <span class="room-number">Room 5</span> <span class="room-cost">$459.54</span> <span class="beds">2 Queen</span> <span class="bidet">Bidet: Yes</span>
+  </div>
 
 
   <!-- Do not include the scripts.js or class files here - it is done by the webpack server -->
