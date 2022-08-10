@@ -63,10 +63,44 @@ dateControl.addEventListener("input", criteriaChanged)
 roomFilter.addEventListener("input", criteriaChanged)
 individualRoomDetailsContainer.addEventListener("click", roomDetailsClicked)
 
+document.querySelector(".manager-todays-bookings-container").addEventListener("click", cancelClicked)
+
 function showManagerDashboard(){
   displayTodaysDate()
   loadManagerData()
   swapToManagerView()
+}
+
+function showManagerTodaysBookings(todaysBookings) {
+  let container = document.querySelector(".manager-todays-bookings-container")
+  let template = document.querySelector(".manager-individual-booking")
+  
+  todaysBookings = todaysBookings.map( (booking) => {
+    let matchingRoom = rooms.find( (room) => room.number === booking.roomNumber)
+    booking.price = matchingRoom.costPerNight
+    return booking
+  })
+
+  container.replaceChildren()
+
+  todaysBookings.forEach( (booking) => {
+    let freshBooking = template.cloneNode(true)
+    freshBooking.classList.remove("template")
+    freshBooking.classList.remove("hidden")
+    freshBooking.querySelector(".date").innerText = booking.date;
+    freshBooking.querySelector(".cancel-button").dataset.id = booking.id
+    freshBooking.querySelector(".room-number").innerText = `Room ${booking.roomNumber}`;
+    freshBooking.querySelector(".price").innerText = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(booking.price)
+    console.log("hwoah")
+    container.append(freshBooking)
+  })
+}
+
+function cancelClicked(event) {
+  if (event.target.classList.contains("cancel-button")) {
+    let bookingID = event.target.dataset.id
+    deleteRoomBooking(bookingID)
+  }
 }
 
 function swapToManagerView(){
@@ -209,14 +243,30 @@ function makeRoomBooking(bookingInfo) {
     })
 }
 
-function deleteRoomBooking() {
-  let idNumber = 0
+function deleteRoomBooking(id) {
+  let idNumber = id
   let options = {
     method: "DELETE"
   }
-  fetch(bookingsURL + "/" + idNumber, options).then( (response) => {return response.json()}).then( (data) => {
-    console.log(data)
+  fetch(bookingsURL + "/" + idNumber, options).then( (response) => {
+    return response.json()
   })
+    .then( (data) => {
+      console.log(data)
+      
+      let deletedID = data.message.split(" ").find( (substring) => {
+        return substring.startsWith("#")
+      }).split("#")[1]
+      removeDeletedBooking(deletedID)
+      showManagerStats()
+    })
+}
+
+function removeDeletedBooking(id){
+  let deletedIndex = bookings.findIndex( (booking) => {
+    return booking.id == id;
+  })
+  bookings.splice(deletedIndex, 1)
 }
 
 function chooseRandomCustomerID() {
@@ -274,6 +324,8 @@ function showManagerStats() {
   document.querySelector(".rooms-available-today").innerText = roomsAvailableToday;
   document.querySelector(".todays-revenue").innerText = revenueToday;
   document.querySelector(".percentage-occupied").innerText = percentageOccupied;
+
+  showManagerTodaysBookings(todaysBookings)
 }
 
 function loadData(){
