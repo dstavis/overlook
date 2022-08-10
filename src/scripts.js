@@ -38,11 +38,59 @@ const individualBookingsContainer = document.querySelector(".individual-bookings
 const individualRoomDetailTemplate = document.querySelector(".individual-room-detail.template")
 const individualRoomDetailsContainer = document.querySelector(".individual-room-details-container")
 
-// Event listeners
+// Event listeners 
 
 window.addEventListener("load", start)
 dateControl.addEventListener("input", criteriaChanged)
 roomFilter.addEventListener("input", criteriaChanged)
+individualRoomDetailsContainer.addEventListener("click", roomDetailsClicked)
+
+function roomDetailsClicked(event) {
+  // was it a book room button that got clicked?
+  if (event.target.classList.contains("book-room-button")) {
+    // if so, which room number was clicked?
+    let roomNumberToBook = Number(event.target.dataset.id)
+    // make a book request for that room number, for this customer's userID, on the date they have selected
+    let formattedChosenDate = dateControl.value.split("-").join("/")
+    let customerID = currentCustomer.id
+    // { "userID": 48, "date": "2019/09/23", "roomNumber": 4 }
+    let bookingInfo = {
+      userID: customerID,
+      date: formattedChosenDate,
+      roomNumber: roomNumberToBook
+    }
+    makeRoomBooking(bookingInfo)
+  }
+}
+
+function makeRoomBooking(bookingInfo) {
+  // TODO: move this business logic into the Booking class
+  let options = {
+    method: "POST",
+    headers: {"content-type": "application/JSON"},
+    body: JSON.stringify(bookingInfo)
+  }
+  // use fetch to make a post request 
+  fetch(bookingsURL, options)
+    .then( (response) => {
+      return response.json()
+    })
+    .then( (data) => {
+      if (!data.newBooking) {
+        throw new Error(data.message)
+      } else {
+        let newBooking = new Booking(data.newBooking);
+        
+        bookings.push(newBooking)
+        currentCustomer.bookings.push(newBooking)
+        displayBookingsForCustomer(currentCustomer)
+        criteriaChanged()
+      }
+    })
+    .catch( (error) => {
+      console.error(error)
+    })
+}
 
 function chooseRandomCustomerID() {
   let randomIDNumber = Math.floor((1 + Math.random() * 50))
@@ -84,8 +132,7 @@ function loadData(){
     })
 }
 
-function criteriaChanged(event) {
-  event.preventDefault()
+function criteriaChanged() {
   let roomsForDisplay = determineRooms()
   // show a list of all the rooms that made it through the filter 
   showRoomsForReservation(roomsForDisplay)
@@ -126,6 +173,7 @@ function showRoomsForReservation(roomDetails) {
     freshRoomDisplay.classList.remove("template")
     freshRoomDisplay.classList.remove("hidden")
     // fill the fresh individualRoomDetail with the data extracted from the room
+    freshRoomDisplay.querySelector("button").dataset.id = roomDetail.number
     freshRoomDisplay.querySelector(".room-number").innerText = "Room " + roomDetail.number
     freshRoomDisplay.querySelector(".room-cost").innerText = "$" + roomDetail.costPerNight
     freshRoomDisplay.querySelector(".room-type").innerText = roomDetail.roomType
@@ -139,37 +187,28 @@ function showRoomsForReservation(roomDetails) {
 }
   
 function massageData(apiData) {
-  // What do I want to know for display?
-  // I want to know all the bookings made by a single customer.
-
-  // find bookings whose userID field matches customer.ID field
   let customerBookingsWithPrice = apiData.bookings.filter( (booking) => {
     return booking.userID === apiData.customer.id
-    // For each booking, I want to know how much it cost
   }).map( (booking) => {
-    // get that booking's roomNumber value and find the room whose room.number value matches it
-    // that room has a costPerNight, which tells me the cost of the booking
     booking.price = apiData.rooms.find( (room) => room.number === booking.roomNumber).costPerNight
-    return booking;
-  })
-  // I want each customer to know how much they've spent so far
-  // after I've made a list of all the bookings w/costs, reduce it by summing their costs together to get the total
-  // *note: I moved this logic into a method on the Customer class so that it could be used in other situations
-  // it also gets used automatically during the customer constructor so we don't have to specifically ask for it 
-  
-  // Create class instances of customer (and bookings to live on that customer)
-  let instantiatedBookings = customerBookingsWithPrice.map(bookingData => {
-    return new Booking(bookingData)
-  })
-
-  // Sort bookings by date in descending order (most recent/farthest in the future first)
-  instantiatedBookings.sort( (a, b) => { return new Date(b.date) - new Date(a.date)} )
+    return new Booking(booking);
+  }).sort( (a, b) => { return new Date(b.date) - new Date(a.date)} )
   
   let customerData = apiData.customer
-  customerData.bookings = instantiatedBookings;
+  customerData.bookings = customerBookingsWithPrice;
     
   // assign data to global variables => save it in the format that is most useful 
   currentCustomer = new Customer(customerData)
+}
+
+function updateCustomerBookings() {
+  currentCustomer.bookings = bookings.filter( (booking) => {
+    return booking.userID === currentCustomer.id
+  }).map( (booking) => {
+    booking.price = rooms.find( (room) => room.number === booking.roomNumber).costPerNight
+    return new Booking(booking);
+  }).sort( (a, b) => { return new Date(b.date) - new Date(a.date)} )
+  return true;
 }
 
 function displayCustomerName() {
@@ -179,11 +218,8 @@ function displayCustomerName() {
 }
 
 function displayBookingsForCustomer(customer) {
-  
-  // Now that I've got that info, what do I want to do with it?
-  // I want to display the customer's total spent in the header
   customerTotalSpentDisplay.innerText = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(customer.totalSpent)
-
+  individualBookingsContainer.replaceChildren()
   customer.bookings.forEach( (booking) => {
     displayBooking(booking)
   } )

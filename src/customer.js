@@ -14,6 +14,7 @@ class Customer {
       return sum += currentBooking.price
     }, 0).toFixed(2) )
   }
+
 }
 
 export default Customer
