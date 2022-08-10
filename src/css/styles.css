@@ -13,14 +13,98 @@ body {
 
 }
 
+p {
+  display: inline-block;
+}
+
 /* VARIABLES */
 
 body * {
   /* border: red solid 1px; */
 }
 
+/* UTILITIES */
+
+.hidden {
+  display: none !important;
+}
+
 /* COMPONENTS */
 
+hr {
+  margin-bottom: 20px;
+}
+
+button {
+  box-sizing: border-box;
+  padding: 5px;
+}
+
+h1 {
+  font-size: 1.17rem;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color:darkred;
+}
+
+.logo {
+  font-size: 2.0rem;
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
+  margin-bottom: 50px;
+}
+
+.dashboard-body {
+  height: 70vh;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: start;
+  align-items: center;
+
+  overflow: hidden;
+}
+
+.top-widget {
+  width: 50vw;
+  min-height: 300px;
+
+  display:flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.bottom-widget {
+  width: 50vw;
+
+  display: flex;
+  flex-direction: column;
+}
+
+div[role="listitem"] {
+  margin-bottom: 10px;
+}
 
 /* LAYOUT */
 
@@ -41,64 +125,131 @@ main > header {
   margin-bottom: 50px;
 }
 
-.customer-dashboard {
+sub {
+  margin-left: 10px;
+}
+
+#login .welcome {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  
+  height: 33%;
+}
+
+#login {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  width: 100vw;
+  justify-content: start;
+  align-items: center;
+}
+
+#login hr {
+  margin-top: 5px;
+  width: 25%;
+}
+
+#error-display {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#login input {
+  height: 25px;
+  width: 200px;
+}
+
+#login button {
+  margin-top: 15px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+
+  height: 30%;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#customer-dashboard {
   display: flex;
   flex-direction: column;
 }
 
-.customer-dashboard-header {
+.date-input-container {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-
-  margin-bottom: 50px;
-}
-
-.customer-dashboard-body {
-  height: 70vh;
-  width: 100%;
-
-  display: flex;
-  flex-direction: row;
-
-  justify-content: center;
-}
-
-.bookings {
-  width: 50vw;
-
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 20px;
 }
 
 .bookings-header {
   display: flex;
   flex-direction: row;
   justify-content: start;
-
-  margin-bottom: 20px;
 }
 
-.each-bookings-container {
+.individual-bookings-container {
+  max-height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: start;
+  overflow: scroll;
 }
 
-.each-booking {
+.individual-booking {
   height: 40px;
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
+
+  margin-bottom: 10px;
 }
 
-.date {
+.date, .price {
   margin-left: 10px;
   margin-right: 20px;
+}
+
+.individual-room-details-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  overflow: scroll;
+
+  width: 100%;
+  height: 100%;
+}
+
+.individual-room-detail {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+  width: 100%
 }
 
 
 
 /* STYLES */
 
+.individual-room-detail {
+  border: 1px grey solid;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 3px;
+}

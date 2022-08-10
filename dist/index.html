@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="This page can be used to reserve a room or view past booked rooms for guests of the Overlook Hotel.">
   <title>Overlook| Book a room</title>
 </head>
 
@@ -15,26 +16,117 @@
       <h1 class="logo">Overlook</h1>
     </header>
 
-    <section id="customer-dashboard">
-      
-      <section class="customer-dashboard-header">
+    <section id="login" class="">
+      <div class="welcome">
+        <h2>Welcome!</h2>
+        <p>Please log in with your customer credentials below to access your dashboard.</p>
+        <h4 id="error-display" class="hidden"></h4>
+      </div>
+      <h1>Login</h1>
+      <hr>
+      <div role="form" id="login-form">
+        <label for="username">Username </label>
+        <input id="username" type="text">
+        <label for="password">Password </label>
+        <input id="password" type="password">
+        <button type="button" id="login-button">Log in</button>
+      </div>
+    </section>
+
+    <section id="manager-dashboard" class="hidden">
+      <section class="manager-dashboard-header dashboard-header">
         <div class="welcome">
-          <h3>Welcome, User!</h3>
-        </div>
-        <div class="total-spent">
-          <h4>Total Spent: <span class="dollars"> $1,234.56 </span></h4>
+          <h1>Welcome, Manager!</h1>
         </div>
       </section>
 
-      <section class="customer-dashboard-body">
-        <section class="bookings">
-          <div class="bookings-header">
-            <h2>Bookings</h2>
+      <section class="manager-dashboard-body dashboard-body">
+        
+        <section class="today">
+          <div class="today-header">
+            <h3>Today, <span class="todays-date"></span></h3>
           </div>
-          <div class="each-bookings-container">
-            <button class="each-booking">
-              <span class="date">1/23/4567</span> <span class="room">Room 8</span>
-            </button>
+          <hr>
+          <div class="today-body">
+            <div>
+              Rooms Available: <span class="rooms-available-today">0</span>
+            </div>
+            <div>
+              Today's Revenue: <span class="todays-revenue">$0.00</span>
+            </div>
+            <div>
+              Percentage Occupied: <span class="percentage-occupied">0%</span>
+            </div>
+          </div>
+
+        </section>
+        <br>
+        
+        <section class="manager-bookings">
+          <div class="manager-bookings-header">
+            <h3>Todays Bookings</h3>
+          </div>
+          <hr>
+          <div class="manager-todays-bookings-container">
+          
+          </div>
+          
+        </section>
+
+      </section>
+
+    </section>
+
+    <section id="customer-dashboard" class="hidden">
+      
+      <section class="customer-dashboard-header dashboard-header">
+        <div class="welcome">
+          <h1>Welcome, <span class="customer-name">User!</span></h1>
+        </div>
+        <div class="total-spent">
+          <h2>Total Spent: <span class="dollars"> $1,234.56 </span></h2>
+        </div>
+      </section>
+
+      <section class="customer-dashboard-body dashboard-body">
+        <section class="reserve top-widget">
+          <div class="reserve-header">
+            <h3>Make a Reservation</h3>
+          </div>
+          <hr>
+          <div class="date-input-container">
+            <div class="date-input">
+              <label for="room-date">
+                Date: 
+              </label>
+              <input type="date" id="room-date" aria-controls="rooms-available-to-book">
+            </div>
+            <div class="room-filter">
+              <label for="room-type-select">
+                Filter by room type:
+              </label>
+              <select id="room-type-select" name="room-types" aria-controls="rooms-available-to-book">
+                <option value="any" selected="true">Any</option>
+                <option value="single room">Single Room</option>
+                <option value="suite">Suite</option>
+                <option value="junior suite">Junior Suite</option>
+                <option value="residential suite">Residential Suite</option>
+              </select>
+            </div>
+          </div>
+
+          <div role="list" id="rooms-available-to-book" class="individual-room-details-container">
+            <p>Choose a date above to see rooms available on that day</p>
+          </div>
+        </section>
+        
+        <section class="bookings bottom-widget">
+          <div class="bookings-header">
+            <h3>Bookings</h3>
+            <p><sub>by date in descending order</sub></p>
+          </div>
+          <hr>
+          <div role="list" class="individual-bookings-container">
           </div>
         </section>
       </section>
@@ -43,7 +135,17 @@
 
   </main>
 
+  <button role="listitem" class="individual-booking template hidden">
+    <span class="date"></span> <span class="room-number"></span> <span class="price"></span>
+  </button>
 
+  <div role="listitem" class="manager-individual-booking template hidden">
+    <button type="button" class="cancel-button">Cancel</button> <span class="room-number"></span> <span class="price"></span>
+  </div>
+
+  <div role="listitem" class="individual-room-detail template hidden">
+    <button type="button" class="book-room-button">Book This Room</button> <span class="room-number">Room 5</span> <span class="room-cost">$459.54</span> <span class="room-type">suite</span> <span class="beds">2 Queen</span> <span class="bidet">Bidet: Yes</span>
+  </div>
 
 
   <!-- Do not include the scripts.js or class files here - it is done by the webpack server -->
