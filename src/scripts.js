@@ -1,3 +1,4 @@
+/* eslint-disable brace-style */
 /* eslint-disable max-len */
 /* eslint-disable space-before-blocks */
 // This is the JavaScript entry file - your code begins here
@@ -43,6 +44,55 @@ const individualRoomDetailsContainer = document.querySelector(".individual-room-
 window.addEventListener("load", start)
 dateControl.addEventListener("input", criteriaChanged)
 roomFilter.addEventListener("input", criteriaChanged)
+individualRoomDetailsContainer.addEventListener("click", roomDetailsClicked)
+
+function roomDetailsClicked(event) {
+  // was it a book room button that got clicked?
+  if (event.target.classList.contains("book-room-button")) {
+    // if so, which room number was clicked?
+    let roomNumberToBook = Number(event.target.dataset.id)
+    // make a book request for that room number, for this customer's userID, on the date they have selected
+    let formattedChosenDate = dateControl.value.split("-").join("/")
+    let customerID = currentCustomer.id
+    // { "userID": 48, "date": "2019/09/23", "roomNumber": 4 }
+    let bookingInfo = {
+      userID: customerID,
+      date: formattedChosenDate,
+      roomNumber: roomNumberToBook
+    }
+    makeRoomBooking(bookingInfo)
+  }
+}
+
+function makeRoomBooking(bookingInfo) {
+  // TODO: move this business logic into the Booking class
+  let options = {
+    method: "POST",
+    headers: {"content-type": "application/JSON"},
+    body: JSON.stringify(bookingInfo)
+  }
+  // use fetch to make a post request 
+  fetch(bookingsURL, options)
+    .then( (response) => {
+      return response.json()
+    })
+    .then( (data) => {
+      if (!data.newBooking) {
+        throw new Error(data.message)
+      } else {
+        // update our data based on the new data
+        // this should result in the following:
+        // the booked room appearing in the list of bookings
+        loadData({bookings: true})
+        // the booked room being removed from the reservations pane
+        criteriaChanged()
+        console.log(data)
+      }
+    })
+    .catch( (error) => {
+      console.error(error)
+    })
+}
 
 function chooseRandomCustomerID() {
   let randomIDNumber = Math.floor((1 + Math.random() * 50))
@@ -53,12 +103,21 @@ function start() {
   console.log("Here we go!") 
   dateControl.min = today;
   dateControl.value = today;
-  loadData()
+  loadData({bookings: true, rooms: true, randomCustomer: true })
   console.log("Data loading")
 }
 
-function loadData(){
-  Promise.all( [fetch(customersURL), fetch(bookingsURL), fetch(roomsURL), fetch(customersURL + "/" + chooseRandomCustomerID())] )
+function loadData(options = { customers: true, bookings: true, rooms: true, randomCustomer: true }) {
+
+  let promisesToLoad = []
+  if (options.customers) promisesToLoad.push(fetch(customersURL));
+  if (options.bookings) promisesToLoad.push(fetch(bookingsURL));
+  if (options.rooms) promisesToLoad.push(fetch(roomsURL));
+  if (options.randomCustomer) promisesToLoad.push(fetch(customersURL + "/" + chooseRandomCustomerID()));
+
+  // alternate format for lines 112-115 ::> options.customers ? promisesToLoad.push(fetch(customersURL)) : "" 
+  
+  Promise.all(promisesToLoad)
     .then( (responses) => {
       return Promise.all(responses.map( (response) => {
         return response.json()
@@ -66,15 +125,23 @@ function loadData(){
     })
     .then( (data) => {
       // customers = data[0].customers
-      let bookingsData = data[1].bookings
-      let roomsData = data[2].rooms
-      let customerData = data[3]
+
+      let bookingsData;
+      let roomsData;
+      let customerData;
+      let apiData;
+
+      data.forEach( (datum) => {
+        if (datum.bookings) { bookingsData = datum.bookings }
+        if (datum.rooms) { roomsData = datum.rooms }
+        if (datum.name) { customerData = datum } else { customerData = currentCustomer}
+      })
       
-      let apiData = { bookings: bookingsData, rooms: roomsData, customer: customerData }
+      apiData = { bookings: bookingsData, rooms: roomsData, customer: customerData }
       
-      // hold on to the rooms 
-      rooms = apiData.rooms;
-      bookings = apiData.bookings;
+      // global variables
+      rooms = roomsData;
+      bookings = bookingsData;
 
       // massage the data into convenient shapes for display scripts
       massageData(apiData)
@@ -84,8 +151,7 @@ function loadData(){
     })
 }
 
-function criteriaChanged(event) {
-  event.preventDefault()
+function criteriaChanged() {
   let roomsForDisplay = determineRooms()
   // show a list of all the rooms that made it through the filter 
   showRoomsForReservation(roomsForDisplay)
@@ -126,6 +192,7 @@ function showRoomsForReservation(roomDetails) {
     freshRoomDisplay.classList.remove("template")
     freshRoomDisplay.classList.remove("hidden")
     // fill the fresh individualRoomDetail with the data extracted from the room
+    freshRoomDisplay.querySelector("button").dataset.id = roomDetail.number
     freshRoomDisplay.querySelector(".room-number").innerText = "Room " + roomDetail.number
     freshRoomDisplay.querySelector(".room-cost").innerText = "$" + roomDetail.costPerNight
     freshRoomDisplay.querySelector(".room-type").innerText = roomDetail.roomType
@@ -141,10 +208,10 @@ function showRoomsForReservation(roomDetails) {
 function massageData(apiData) {
   // What do I want to know for display?
   // I want to know all the bookings made by a single customer.
-
+  let customerID = currentCustomer.id || apiData.customer.id
   // find bookings whose userID field matches customer.ID field
   let customerBookingsWithPrice = apiData.bookings.filter( (booking) => {
-    return booking.userID === apiData.customer.id
+    return booking.userID === customerID
     // For each booking, I want to know how much it cost
   }).map( (booking) => {
     // get that booking's roomNumber value and find the room whose room.number value matches it
@@ -165,12 +232,18 @@ function massageData(apiData) {
   // Sort bookings by date in descending order (most recent/farthest in the future first)
   instantiatedBookings.sort( (a, b) => { return new Date(b.date) - new Date(a.date)} )
   
-  let customerData = apiData.customer
-  customerData.bookings = instantiatedBookings;
-    
+  if (!currentCustomer) {
+    let customerData = apiData.customer
+    customerData.bookings = instantiatedBookings;
+    currentCustomer = new Customer(customerData)
+  } else {
+    currentCustomer.bookings = instantiatedBookings;
+  }
+  
   // assign data to global variables => save it in the format that is most useful 
-  currentCustomer = new Customer(customerData)
 }
+
+
 
 function displayCustomerName() {
   // Query select the welcome message
@@ -183,7 +256,7 @@ function displayBookingsForCustomer(customer) {
   // Now that I've got that info, what do I want to do with it?
   // I want to display the customer's total spent in the header
   customerTotalSpentDisplay.innerText = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(customer.totalSpent)
-
+  individualRoomDetailsContainer.replaceChildren()
   customer.bookings.forEach( (booking) => {
     displayBooking(booking)
   } )
