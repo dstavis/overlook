@@ -112,10 +112,32 @@ sub {
   width: 25%;
 }
 
+#error-display {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 #login input {
-  margin-top: 5px;
   height: 25px;
   width: 200px;
+}
+
+#login button {
+  margin-top: 15px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+
+  height: 30%;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 #customer-dashboard {

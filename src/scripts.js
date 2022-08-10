@@ -19,12 +19,19 @@ let roomsURL = "http://localhost:3001/api/v1/rooms"
 
 // Global Data Variables
 
-let currentCustomer;
+let errorMessages = [];
 let today = new Date().toLocaleDateString("en-CA")
+let currentCustomer;
 let rooms;
 let bookings;
 
+
 // Query Selectors
+
+let usernameInput = document.querySelector(`#username`)
+let passwordInput = document.querySelector(`#password`)
+const loginButton = document.querySelector(`#login-button`)
+const errorDisplay = document.querySelector(`#error-display`)
 
 const dateControl = document.querySelector(`input[type="date"]`)
 const roomFilter = document.querySelector("#room-type-select")
@@ -41,9 +48,81 @@ const individualRoomDetailsContainer = document.querySelector(".individual-room-
 // Event listeners 
 
 window.addEventListener("load", start)
+loginButton.addEventListener("click", submitLogin)
 dateControl.addEventListener("input", criteriaChanged)
 roomFilter.addEventListener("input", criteriaChanged)
 individualRoomDetailsContainer.addEventListener("click", roomDetailsClicked)
+
+function submitLogin() {
+  let username = usernameInput.value
+  let password = passwordInput.value
+  let customerIDNumber = Number(username.split("customer")[1])
+
+  errorMessages = []
+  showLoginError()
+
+  if (!username || !password) {
+    errorMessages = []
+    errorMessages.push("Please enter a value into both fields")
+    showLoginError()
+  } else if (isValidUsername(username) && isValidPassword(password)) {
+    errorMessages = []
+    errorMessages.push(`Correct information! Logging in for customer ${customerIDNumber}...`)
+    showLoginError()
+    // get the number from the username
+    // make it so that the customer that will display will be the customer whose id number matches that number
+
+    // show the dashboard
+  }
+}
+
+function isValidUsername(input) {
+  let beginsWithCustomer = input.startsWith("customer")
+  let idNumber = Number(input.split("customer")[1])
+  let numberBetweenOneAndFifty = (idNumber > 1 && idNumber < 51)
+
+  errorMessages = []
+
+  if (beginsWithCustomer && numberBetweenOneAndFifty){
+    return true
+  } else {
+    if (!beginsWithCustomer) {
+      errorMessages.push("A username should begin with customer")
+    }
+    if (!idNumber) {
+      errorMessages.push("A username must include a number")
+    }
+    if (!numberBetweenOneAndFifty) {
+      errorMessages.push("A username's number must be between 1 and 50")
+    }
+  }
+  showLoginError()
+  return false;
+}
+
+function isValidPassword(input) {
+  if (input === "overlook2021") {
+    return true
+  } else {
+    errorMessages = []
+    errorMessages.push("Incorrect password")
+    showLoginError()
+    return false
+  }
+}
+
+
+function showLoginError() {
+  errorDisplay.replaceChildren()
+  errorDisplay.classList.remove("hidden")
+  errorMessages.map( (message) => {
+    let messageTag = document.createElement("p")
+    messageTag.innerText = message
+    return messageTag
+  }).forEach( (messageNode) => {
+    errorDisplay.append(messageNode)
+  })
+}
 
 function roomDetailsClicked(event) {
   if (event.target.classList.contains("book-room-button")) {

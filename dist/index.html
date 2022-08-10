@@ -20,14 +20,17 @@
       <div class="welcome">
         <h2>Welcome!</h2>
         <p>Please log in with your customer credentials below to access your dashboard.</p>
+        <h4 id="error-display" class="hidden"></h4>
       </div>
       <h1>Login</h1>
       <hr>
-      <label for="username">Username </label>
-      <input id="username" type="text">
-      <br>
-      <label for="password">Password </label>
-      <input id="password" type="password">
+      <div role="form" id="login-form">
+        <label for="username">Username </label>
+        <input id="username" type="text">
+        <label for="password">Password </label>
+        <input id="password" type="password">
+        <button type="button" id="login-button">Log in</button>
+      </div>
     </section>
 
     <section id="customer-dashboard" class="hidden">
