@@ -74,7 +74,7 @@ function showManagerDashboard(){
 function showManagerTodaysBookings(todaysBookings) {
   let container = document.querySelector(".manager-todays-bookings-container")
   let template = document.querySelector(".manager-individual-booking")
-  
+
   todaysBookings = todaysBookings.map( (booking) => {
     let matchingRoom = rooms.find( (room) => room.number === booking.roomNumber)
     booking.price = matchingRoom.costPerNight
@@ -87,11 +87,9 @@ function showManagerTodaysBookings(todaysBookings) {
     let freshBooking = template.cloneNode(true)
     freshBooking.classList.remove("template")
     freshBooking.classList.remove("hidden")
-    freshBooking.querySelector(".date").innerText = booking.date;
     freshBooking.querySelector(".cancel-button").dataset.id = booking.id
     freshBooking.querySelector(".room-number").innerText = `Room ${booking.roomNumber}`;
     freshBooking.querySelector(".price").innerText = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(booking.price)
-    console.log("hwoah")
     container.append(freshBooking)
   })
 }
@@ -310,7 +308,6 @@ function showManagerStats() {
   })
 
   let roomsAvailableToday = rooms.length - todaysBookings.length
-  console.log("woah")
 
   let revenueToday = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(todaysBookings.reduce( (sum, booking) => {
     let price = rooms.find( (room) => {
