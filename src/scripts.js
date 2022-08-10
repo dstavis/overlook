@@ -83,6 +83,7 @@ function makeRoomBooking(bookingInfo) {
         
         bookings.push(newBooking)
         currentCustomer.bookings.push(newBooking)
+        updateCustomerBookings()
         displayBookingsForCustomer(currentCustomer)
         criteriaChanged()
       }
@@ -202,13 +203,11 @@ function massageData(apiData) {
 }
 
 function updateCustomerBookings() {
-  currentCustomer.bookings = bookings.filter( (booking) => {
-    return booking.userID === currentCustomer.id
-  }).map( (booking) => {
-    booking.price = rooms.find( (room) => room.number === booking.roomNumber).costPerNight
-    return new Booking(booking);
+  currentCustomer.bookings = currentCustomer.bookings.map( (booking) => {
+    let matchingRoom = rooms.find( (room) => room.number === booking.roomNumber)
+    booking.price = matchingRoom.costPerNight
+    return booking
   }).sort( (a, b) => { return new Date(b.date) - new Date(a.date)} )
-  return true;
 }
 
 function displayCustomerName() {
@@ -218,6 +217,7 @@ function displayCustomerName() {
 }
 
 function displayBookingsForCustomer(customer) {
+  customer.updateTotalSpent()
   customerTotalSpentDisplay.innerText = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(customer.totalSpent)
   individualBookingsContainer.replaceChildren()
   customer.bookings.forEach( (booking) => {
