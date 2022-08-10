@@ -86,6 +86,22 @@ h4 {
   overflow: hidden;
 }
 
+.top-widget {
+  width: 50vw;
+  min-height: 300px;
+
+  display:flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.bottom-widget {
+  width: 50vw;
+
+  display: flex;
+  flex-direction: column;
+}
+
 /* LAYOUT */
 
 main {
@@ -166,27 +182,11 @@ sub {
   flex-direction: column;
 }
 
-.reserve{
-  width: 50vw;
-  min-height: 300px;
-
-  display:flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-}
-
 .date-input-container {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   margin-bottom: 20px;
-}
-
-.bookings {
-  width: 50vw;
-
-  display: flex;
-  flex-direction: column;
 }
 
 .bookings-header {
@@ -216,10 +216,6 @@ sub {
 .date, .price {
   margin-left: 10px;
   margin-right: 20px;
-}
-
-.price {
-  
 }
 
 .individual-room-details-container {
