@@ -21,12 +21,16 @@ let roomsURL = "http://localhost:3001/api/v1/rooms"
 
 let errorMessages = [];
 let today = new Date().toLocaleDateString("en-CA")
+let chosenCustomerID;
 let currentCustomer;
 let rooms;
 let bookings;
 
 
 // Query Selectors
+
+const loginSection = document.querySelector("#login")
+const customerDashboard = document.querySelector("#customer-dashboard")
 
 let usernameInput = document.querySelector(`#username`)
 let passwordInput = document.querySelector(`#password`)
@@ -47,7 +51,7 @@ const individualRoomDetailsContainer = document.querySelector(".individual-room-
 
 // Event listeners 
 
-window.addEventListener("load", start)
+// window.addEventListener("load", loadDashboard)
 loginButton.addEventListener("click", submitLogin)
 dateControl.addEventListener("input", criteriaChanged)
 roomFilter.addEventListener("input", criteriaChanged)
@@ -69,20 +73,20 @@ function submitLogin() {
     errorMessages = []
     errorMessages.push(`Correct information! Logging in for customer ${customerIDNumber}...`)
     showLoginError()
-    // get the number from the username
-    // make it so that the customer that will display will be the customer whose id number matches that number
-
-    // show the dashboard
+    
+    chosenCustomerID = customerIDNumber;
+    loadDashboard()
   }
 }
+
 
 function isValidUsername(input) {
   let beginsWithCustomer = input.startsWith("customer")
   let idNumber = Number(input.split("customer")[1])
-  let numberBetweenOneAndFifty = (idNumber > 1 && idNumber < 51)
-
+  let numberBetweenOneAndFifty = (idNumber > 0 && idNumber < 51)
+  
   errorMessages = []
-
+  
   if (beginsWithCustomer && numberBetweenOneAndFifty){
     return true
   } else {
@@ -122,6 +126,11 @@ function showLoginError() {
   }).forEach( (messageNode) => {
     errorDisplay.append(messageNode)
   })
+}
+
+function swapToDashboardView() {
+  loginSection.classList.add("hidden")
+  customerDashboard.classList.remove("hidden")
 }
 
 function roomDetailsClicked(event) {
@@ -175,16 +184,15 @@ function chooseRandomCustomerID() {
   return randomIDNumber
 }
 
-function start() {
-  console.log("Here we go!") 
+function loadDashboard() {
   dateControl.min = today;
   dateControl.value = today;
   loadData()
-  console.log("Data loading")
+  swapToDashboardView()
 }
 
 function loadData(){
-  Promise.all( [fetch(customersURL), fetch(bookingsURL), fetch(roomsURL), fetch(customersURL + "/" + chooseRandomCustomerID())] )
+  Promise.all( [fetch(customersURL), fetch(bookingsURL), fetch(roomsURL), fetch(customersURL + "/" + chosenCustomerID)] )
     .then( (responses) => {
       return Promise.all(responses.map( (response) => {
         return response.json()
