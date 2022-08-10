@@ -25,6 +25,8 @@ let chosenCustomerID;
 let currentCustomer;
 let rooms;
 let bookings;
+let customers;
+
 
 
 // Query Selectors
@@ -63,6 +65,7 @@ individualRoomDetailsContainer.addEventListener("click", roomDetailsClicked)
 
 function showManagerDashboard(){
   displayTodaysDate()
+  loadManagerData()
   swapToManagerView()
 }
 
@@ -72,6 +75,7 @@ function swapToManagerView(){
 }
 
 function displayTodaysDate(){
+  // part of the manager dashboard
   document.querySelector(".todays-date").innerText = today;
 }
 
@@ -205,6 +209,16 @@ function makeRoomBooking(bookingInfo) {
     })
 }
 
+function deleteRoomBooking() {
+  let idNumber = 0
+  let options = {
+    method: "DELETE"
+  }
+  fetch(bookingsURL + "/" + idNumber, options).then( (response) => {return response.json()}).then( (data) => {
+    console.log(data)
+  })
+}
+
 function chooseRandomCustomerID() {
   let randomIDNumber = Math.floor((1 + Math.random() * 50))
   return randomIDNumber
@@ -215,6 +229,51 @@ function loadDashboard() {
   dateControl.value = today;
   loadData()
   swapToDashboardView()
+}
+
+function loadManagerData() {
+  Promise.all( [fetch(customersURL), fetch(bookingsURL), fetch(roomsURL)] )
+    .then( (responses) => {
+      return Promise.all(responses.map( (response) => {
+        return response.json()
+      }))
+    })
+    .then( (data) => {
+      let customerData = data[0].customers
+      let bookingsData = data[1].bookings
+      let roomsData = data[2].rooms
+      
+      let apiData = { bookings: bookingsData, rooms: roomsData, customers: customerData }
+      
+      // Global Variables
+      rooms = apiData.rooms;
+      bookings = apiData.bookings;
+      customers = apiData.customers;
+
+      showManagerStats()
+    })
+}
+
+function showManagerStats() {
+  let todaysBookings = bookings.filter( (booking) => {
+    return booking.date === today.split("-").join("/")
+  })
+
+  let roomsAvailableToday = rooms.length - todaysBookings.length
+  console.log("woah")
+
+  let revenueToday = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(todaysBookings.reduce( (sum, booking) => {
+    let price = rooms.find( (room) => {
+      return Number(room.number) === Number(booking.roomNumber)
+    }).costPerNight
+    return sum + price
+  }, 0))
+
+  let percentageOccupied = Math.floor((todaysBookings.length / rooms.length) * 100) + "%"
+
+  document.querySelector(".rooms-available-today").innerText = roomsAvailableToday;
+  document.querySelector(".todays-revenue").innerText = revenueToday;
+  document.querySelector(".percentage-occupied").innerText = percentageOccupied;
 }
 
 function loadData(){
