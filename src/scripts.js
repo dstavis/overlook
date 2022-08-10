@@ -7,6 +7,7 @@
 import './css/styles.css';
 import Customer from './customer'
 import Booking from './booking'
+import RoomRepository from './roomRepository';
 
 // An example of how you tell webpack to use an image (also need to link to it in the index.html)
 // import './images/turing-logo.png'
@@ -23,6 +24,7 @@ let errorMessages = [];
 let today = new Date().toLocaleDateString("en-CA")
 let chosenCustomerID;
 let currentCustomer;
+let roomRepository;
 let rooms;
 let bookings;
 let customers;
@@ -101,13 +103,12 @@ function cancelClicked(event) {
   }
 }
 
-function swapToManagerView(){
+function swapToManagerView() {
   loginSection.classList.add("hidden")
   managerDashboard.classList.remove("hidden")
 }
 
-function displayTodaysDate(){
-  // part of the manager dashboard
+function displayTodaysDate() {
   document.querySelector(".todays-date").innerText = today;
 }
 
@@ -343,6 +344,7 @@ function loadData(){
       // Global Variables
       rooms = apiData.rooms;
       bookings = apiData.bookings;
+      roomRepository = new RoomRepository({ rooms: rooms, bookings: bookings })
 
       
       massageData(apiData)
@@ -359,20 +361,9 @@ function criteriaChanged() {
 
 function determineRooms() {
   let newDate = dateControl.value;
+  let selectedRoomType = roomFilter.value
   
-  return rooms.filter( (room) => {
-    let selectedRoomType = roomFilter.value
-    
-    let matchesSelectedRoomType = room.roomType === selectedRoomType
-    let notBooked = !bookings.some( (booking) => {
-      return ((booking.roomNumber === room.number) && (booking.date === newDate.split("-").join("/")))
-    })
-    
-    if (roomFilter.value !== "any") {
-      return (matchesSelectedRoomType && notBooked)
-    }
-    return notBooked
-  })
+  return roomRepository.filterRooms(newDate, selectedRoomType)
 }
 
 function showRoomsForReservation(roomDetails) {
@@ -433,7 +424,7 @@ function displayBookingsForCustomer(customer) {
   individualBookingsContainer.replaceChildren()
   customer.bookings.forEach( (booking) => {
     displayBooking(booking)
-  } )
+  })
 }
 
 function displayBooking(booking){
