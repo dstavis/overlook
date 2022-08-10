@@ -158,7 +158,7 @@ function showRoomsForReservation(roomDetails) {
   individualRoomDetailsContainer.replaceChildren()
 
   if (roomDetails.length < 1) {
-    let apologyMessage = document.createElement("h2")
+    let apologyMessage = document.createElement("h4")
     apologyMessage.innerText = "We're so terribly sorry, but there are no rooms available for the selected date and room type. Please try a different set of criteria."
     individualRoomDetailsContainer.append(apologyMessage) 
   }

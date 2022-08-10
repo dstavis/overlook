@@ -38,13 +38,13 @@
               <label for="room-date">
                 Date: 
               </label>
-              <input type="date" id="room-date">
+              <input type="date" id="room-date" aria-controls="rooms-available-to-book">
             </div>
             <div class="room-filter">
               <label for="room-type-select">
                 Filter by room type:
               </label>
-              <select id="room-type-select" name="room-types">
+              <select id="room-type-select" name="room-types" aria-controls="rooms-available-to-book">
                 <option value="any" selected="true">Any</option>
                 <option value="single room">Single Room</option>
                 <option value="suite">Suite</option>
@@ -54,7 +54,7 @@
             </div>
           </div>
 
-          <div class="individual-room-details-container">
+          <div role="list" id="rooms-available-to-book" class="individual-room-details-container">
             <p>Choose a date above to see rooms available on that day</p>
           </div>
         </section>
@@ -65,7 +65,7 @@
             <p><sub>by date in descending order</sub></p>
           </div>
           <hr>
-          <div class="individual-bookings-container">
+          <div role="list" class="individual-bookings-container">
           </div>
         </section>
       </section>
@@ -74,11 +74,11 @@
 
   </main>
 
-  <button class="individual-booking template hidden">
+  <button role="listitem" class="individual-booking template hidden">
     <span class="date"></span> <span class="room-number"></span> <span class="price"></span>
   </button>
 
-  <div class="individual-room-detail template hidden">
+  <div role="listitem" class="individual-room-detail template hidden">
     <button type="button" class="book-room-button">Book This Room</button> <span class="room-number">Room 5</span> <span class="room-cost">$459.54</span> <span class="room-type">suite</span> <span class="beds">2 Queen</span> <span class="bidet">Bidet: Yes</span>
   </div>
 
