@@ -5,8 +5,12 @@
 
 // An example of how you tell webpack to use a CSS (SCSS) file
 import './css/styles.css';
-import Customer from './customer'
+import ApiCalls from './apiCalls'
 import Booking from './booking'
+import BookingList from './bookingList'
+import Room from './room'
+import Customer from './customer'
+import Manager from './manager'
 
 // An example of how you tell webpack to use an image (also need to link to it in the index.html)
 // import './images/turing-logo.png'
