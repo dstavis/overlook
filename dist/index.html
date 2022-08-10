@@ -33,9 +33,71 @@
       </div>
     </section>
 
+    <section id="manager-dashboard" class="hidden">
+      <section class="manager-dashboard-header dashboard-header">
+        <div class="welcome">
+          <h1>Welcome, Manager!</h1>
+        </div>
+      </section>
+
+      <section class="manager-dashboard-body dashboard-body">
+        
+        <section class="today">
+          <div class="today-header">
+            <h3>Today, <span class="todays-date"></span></h3>
+          </div>
+          <div class="today-body">
+            <div>
+              Rooms Available: <span class="rooms-available-today">0</span>
+            </div>
+            <div>
+              Today's Revenue: <span class="todays-revenue">$0.00</span>
+            </div>
+            <div>
+              Percentage Occupied: <span class="percentage-occupied">0%</span>
+            </div>
+          </div>
+
+        </section>
+        
+        <section class="customers">
+          <div class="customers-header">
+            <h3>Customers</h3>
+          </div>
+          <hr>
+          <div class="date-input-container">
+            <div class="date-input">
+              <label for="room-date">
+                Date: 
+              </label>
+              <input type="date" id="room-date" aria-controls="rooms-available-to-book">
+            </div>
+            <div class="room-filter">
+              <label for="room-type-select">
+                Filter by room type:
+              </label>
+              <select id="room-type-select" name="room-types" aria-controls="rooms-available-to-book">
+                <option value="any" selected="true">Any</option>
+                <option value="single room">Single Room</option>
+                <option value="suite">Suite</option>
+                <option value="junior suite">Junior Suite</option>
+                <option value="residential suite">Residential Suite</option>
+              </select>
+            </div>
+          </div>
+
+          <div role="list" id="rooms-available-to-book" class="individual-room-details-container">
+            <p>Choose a date above to see rooms available on that day</p>
+          </div>
+        </section>
+        
+      </section>
+
+    </section>
+
     <section id="customer-dashboard" class="hidden">
       
-      <section class="customer-dashboard-header">
+      <section class="customer-dashboard-header dashboard-header">
         <div class="welcome">
           <h1>Welcome, <span class="customer-name">User!</span></h1>
         </div>
@@ -44,7 +106,7 @@
         </div>
       </section>
 
-      <section class="customer-dashboard-body">
+      <section class="customer-dashboard-body dashboard-body">
         <section class="reserve">
           <div class="reserve-header">
             <h3>Make a Reservation</h3>

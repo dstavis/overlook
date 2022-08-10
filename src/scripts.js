@@ -31,6 +31,7 @@ let bookings;
 
 const loginSection = document.querySelector("#login")
 const customerDashboard = document.querySelector("#customer-dashboard")
+const managerDashboard = document.querySelector("#manager-dashboard")
 
 let usernameInput = document.querySelector(`#username`)
 let passwordInput = document.querySelector(`#password`)
@@ -53,11 +54,31 @@ const individualRoomDetailsContainer = document.querySelector(".individual-room-
 
 // window.addEventListener("load", loadDashboard)
 loginButton.addEventListener("click", submitLogin)
+loginButton.addEventListener("keydown", submitLogin)
+usernameInput.addEventListener("keydown", submitLogin)
+passwordInput.addEventListener("keydown", submitLogin)
 dateControl.addEventListener("input", criteriaChanged)
 roomFilter.addEventListener("input", criteriaChanged)
 individualRoomDetailsContainer.addEventListener("click", roomDetailsClicked)
 
-function submitLogin() {
+function showManagerDashboard(){
+  displayTodaysDate()
+  swapToManagerView()
+}
+
+function swapToManagerView(){
+  loginSection.classList.add("hidden")
+  managerDashboard.classList.remove("hidden")
+}
+
+function displayTodaysDate(){
+  document.querySelector(".todays-date").innerText = today;
+}
+
+function submitLogin(event) {
+  if (event.type === "keydown" && event.key !== "Enter") {
+    return "do nothing"
+  }
   let username = usernameInput.value
   let password = passwordInput.value
   let customerIDNumber = Number(username.split("customer")[1])
@@ -69,6 +90,11 @@ function submitLogin() {
     errorMessages = []
     errorMessages.push("Please enter a value into both fields")
     showLoginError()
+  } else if (username === "manager" && isValidPassword(password)){
+    errorMessages = []
+    errorMessages.push(`Correct information! Logging in for manager...`)
+    showLoginError()
+    showManagerDashboard()
   } else if (isValidUsername(username) && isValidPassword(password)) {
     errorMessages = []
     errorMessages.push(`Correct information! Logging in for customer ${customerIDNumber}...`)

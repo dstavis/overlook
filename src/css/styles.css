@@ -65,6 +65,27 @@ h4 {
   font-size: 2.0rem;
 }
 
+.dashboard-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
+  margin-bottom: 50px;
+}
+
+.dashboard-body {
+  height: 70vh;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: start;
+  align-items: center;
+
+  overflow: hidden;
+}
+
 /* LAYOUT */
 
 main {
@@ -143,28 +164,6 @@ sub {
 #customer-dashboard {
   display: flex;
   flex-direction: column;
-}
-
-.customer-dashboard-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-
-  margin-bottom: 50px;
-}
-
-.customer-dashboard-body {
-  height: 70vh;
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-
-  justify-content: start;
-  align-items: center;
-
-  overflow: hidden;
-
 }
 
 .reserve{
