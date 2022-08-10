@@ -46,14 +46,12 @@ roomFilter.addEventListener("input", criteriaChanged)
 individualRoomDetailsContainer.addEventListener("click", roomDetailsClicked)
 
 function roomDetailsClicked(event) {
-  // was it a book room button that got clicked?
   if (event.target.classList.contains("book-room-button")) {
-    // if so, which room number was clicked?
     let roomNumberToBook = Number(event.target.dataset.id)
-    // make a book request for that room number, for this customer's userID, on the date they have selected
+    
     let formattedChosenDate = dateControl.value.split("-").join("/")
     let customerID = currentCustomer.id
-    // { "userID": 48, "date": "2019/09/23", "roomNumber": 4 }
+    
     let bookingInfo = {
       userID: customerID,
       date: formattedChosenDate,
@@ -70,7 +68,7 @@ function makeRoomBooking(bookingInfo) {
     headers: {"content-type": "application/JSON"},
     body: JSON.stringify(bookingInfo)
   }
-  // use fetch to make a post request 
+  
   fetch(bookingsURL, options)
     .then( (response) => {
       return response.json()
@@ -114,20 +112,20 @@ function loadData(){
       }))
     })
     .then( (data) => {
-      // customers = data[0].customers
+      // let customers = data[0].customers
       let bookingsData = data[1].bookings
       let roomsData = data[2].rooms
       let customerData = data[3]
       
       let apiData = { bookings: bookingsData, rooms: roomsData, customer: customerData }
       
-      // hold on to the rooms 
+      // Global Variables
       rooms = apiData.rooms;
       bookings = apiData.bookings;
 
-      // massage the data into convenient shapes for display scripts
+      
       massageData(apiData)
-      // display scripts
+      
       displayCustomerName(currentCustomer)
       displayBookingsForCustomer(currentCustomer)
     })
@@ -135,7 +133,6 @@ function loadData(){
 
 function criteriaChanged() {
   let roomsForDisplay = determineRooms()
-  // show a list of all the rooms that made it through the filter 
   showRoomsForReservation(roomsForDisplay)
 }
 
@@ -146,26 +143,18 @@ function determineRooms() {
     let selectedRoomType = roomFilter.value
     
     let matchesSelectedRoomType = room.roomType === selectedRoomType
-    // check all the rooms.
-    // for each room's room number, are there any bookings with that room number whose date matches newDate?
-    // if so, that room is OUT
-    // all the other rooms are in
     let notBooked = !bookings.some( (booking) => {
       return ((booking.roomNumber === room.number) && (booking.date === newDate.split("-").join("/")))
     })
     
-    // if the user is filtering by room type
     if (roomFilter.value !== "any") {
-      // return true only if both the matches and notbooked are true
       return (matchesSelectedRoomType && notBooked)
     }
-    // otherwise, ignore matches and return true if notbooked alone is true
     return notBooked
   })
 }
 
 function showRoomsForReservation(roomDetails) {
-  // empty the roomsContainer of any old rooms!!!
   individualRoomDetailsContainer.replaceChildren()
 
   if (roomDetails.length < 1) {
@@ -174,13 +163,11 @@ function showRoomsForReservation(roomDetails) {
     individualRoomDetailsContainer.append(apologyMessage) 
   }
 
-  // for each roomDetail, do the following
   roomDetails.forEach( (roomDetail) => {
-    // grab the template for an individualRoomDetail and clone it, then remove the template and hidden classes
     let freshRoomDisplay = individualRoomDetailTemplate.cloneNode(true)
     freshRoomDisplay.classList.remove("template")
     freshRoomDisplay.classList.remove("hidden")
-    // fill the fresh individualRoomDetail with the data extracted from the room
+    
     freshRoomDisplay.querySelector("button").dataset.id = roomDetail.number
     freshRoomDisplay.querySelector(".room-number").innerText = "Room " + roomDetail.number
     freshRoomDisplay.querySelector(".room-cost").innerText = "$" + roomDetail.costPerNight
@@ -188,8 +175,7 @@ function showRoomsForReservation(roomDetails) {
     freshRoomDisplay.querySelector(".beds").innerText = roomDetail.numBeds + " " + roomDetail.bedSize + " bed(s)"
     let hasBidet = roomDetail.bidet ? "Yes" : "No"
     freshRoomDisplay.querySelector(".bidet").innerText = "Bidet: " + hasBidet
-    // find the container we want the individualRoomDetail(s) to be displayed in
-    // append the filled-in individualRoomDetail to the container
+    
     individualRoomDetailsContainer.append(freshRoomDisplay)
   })
 }
@@ -204,8 +190,7 @@ function massageData(apiData) {
   
   let customerData = apiData.customer
   customerData.bookings = customerBookingsWithPrice;
-    
-  // assign data to global variables => save it in the format that is most useful 
+
   currentCustomer = new Customer(customerData)
 }
 
@@ -218,8 +203,6 @@ function updateCustomerBookings() {
 }
 
 function displayCustomerName() {
-  // Query select the welcome message
-  // insert the current customer's name into that text
   customerWelcomeName.innerText = currentCustomer.name;
 }
 
@@ -236,11 +219,6 @@ function displayBooking(booking){
   let freshBooking = individualBookingTemplate.cloneNode(true)
   freshBooking.classList.remove("template")
   freshBooking.classList.remove("hidden")
-  // fill the template clone with a particular booking's info
-  // I want to display a list of rows with each booking's info, including...
-    // The booking date
-    // the room number
-    // the cost of that booking
   freshBooking.querySelector(".date").innerText = booking.date;
   freshBooking.querySelector(".room-number").innerText = `Room ${booking.roomNumber}`;
   freshBooking.querySelector(".price").innerText = new Intl.NumberFormat('en-US', { style: "currency", currency: "USD"}).format(booking.price)
