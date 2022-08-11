@@ -31,8 +31,11 @@ describe('RoomRepository', function() {
     expect(roomRepository.bookings.length).to.equal(5);
   });
 
+  it('should give its bookings correct prices', function() {
+    expect(roomRepository.bookings[0].price).to.equal(358.4);
+  });
+
   it('should be able to check if a room is available', function() {
-    // happy path, there is no booking for that room on this date
     let room = rooms[0];
     let date = "2022/08/12";
     
@@ -40,7 +43,6 @@ describe('RoomRepository', function() {
   });
 
   it('should be able to check if a room is already booked', function() {
-    // sad path, there is at least one booking for this room on this date
     let room = rooms[0];
     let date = "2022/08/10";
     
@@ -48,9 +50,6 @@ describe('RoomRepository', function() {
   });
 
   it('should return unbooked rooms that match both the date and the roomType chosen', function() {
-    // happy path
-    // we spit out unbooked rooms that match both the date and the roomType chosen
-    // there are two unbooked rooms 
     let date = "2022/08/11"
     let roomType = "single room"
 
@@ -58,9 +57,6 @@ describe('RoomRepository', function() {
   });
 
   it('should return unbooked rooms of all types if roomType is any', function() {
-    // happy path
-    // we spit out unbooked rooms that match both the date and the roomType chosen
-    // there are two unbooked rooms 
     let date = "2022/08/11"
     let roomType = "any"
 
@@ -69,10 +65,6 @@ describe('RoomRepository', function() {
   
 
   it('should return an empty array if no rooms match', function() {
-    // sad path
-    // there are no unbooked rooms that match both the date and the roomType chosen, so we...
-      // return an empty array and let scripts.js figure out to show the error?
-      // return an error message?
     let date = "2022/08/10";
     let roomType = "junior suite"
 
