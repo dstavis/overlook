@@ -56,6 +56,16 @@ describe('RoomRepository', function() {
 
     expect(roomRepository.filterRooms(date, roomType).length).to.equal(2);
   });
+
+  it('should return unbooked rooms of all types if roomType is any', function() {
+    // happy path
+    // we spit out unbooked rooms that match both the date and the roomType chosen
+    // there are two unbooked rooms 
+    let date = "2022/08/11"
+    let roomType = "any"
+
+    expect(roomRepository.filterRooms(date, roomType).length).to.equal(5);
+  });
   
 
   it('should return an empty array if no rooms match', function() {
