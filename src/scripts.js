@@ -231,6 +231,7 @@ function makeRoomBooking(bookingInfo) {
         let newBooking = new Booking(data.newBooking);
         
         bookings.push(newBooking)
+        roomRepository.addBooking(newBooking)
         currentCustomer.bookings.push(newBooking)
         updateCustomerBookings()
         displayBookingsForCustomer(currentCustomer)

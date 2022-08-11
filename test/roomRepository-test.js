@@ -35,6 +35,15 @@ describe('RoomRepository', function() {
     expect(roomRepository.bookings[0].price).to.equal(358.4);
   });
 
+  it('should be able to add a booking and give it a price', function() {
+    let newBooking = new Booking({id: "6fwrgu4i7k55hl6sw", userID: 1, date: "2022/08/12", roomNumber: 1})
+    expect(roomRepository.bookings.length).to.equal(5);
+    
+    roomRepository.addBooking(newBooking)
+    expect(roomRepository.bookings.length).to.equal(6);
+    expect(roomRepository.bookings[5].price).to.equal(358.4);
+  });
+
   it('should be able to check if a room is available', function() {
     let room = rooms[0];
     let date = "2022/08/12";
@@ -62,7 +71,6 @@ describe('RoomRepository', function() {
 
     expect(roomRepository.filterRooms(date, roomType).length).to.equal(5);
   });
-  
 
   it('should return an empty array if no rooms match', function() {
     let date = "2022/08/10";

@@ -13,6 +13,11 @@ class RoomRepository {
     })
   }
 
+  addBooking(newBooking) {
+    this.bookings.push(newBooking)
+    this.attachPriceToBookings()
+  }
+
   filterRooms(selectedDate, selectedRoomType) {
   
     return this.rooms.filter( (room) => {
